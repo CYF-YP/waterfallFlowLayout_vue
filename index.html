@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>瀑布流</title>
+    <script src="js/jquery-3.4.0.js"></script>
+    <script src="js/vue.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+
+<body>
+    <div id="wrap">
+        <div class="list-item" v-for="data in dataList">
+            <a href="data.href">
+                <img :src="data.src" data-isloaded="0" alt="">
+                <span>{{data.name}}</span>
+            </a>
+        </div>
+        <div class="loadMore">
+            <span v-if="loading">正在加载...</span>
+            <span v-else>没有更多了</span>
+        </div>
+    </div>
+    <script src="js/index.js"></script>
+</body>
+
+</html>

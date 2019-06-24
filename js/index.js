@@ -11,6 +11,7 @@ $(function () {
         created: function () {
             this.init();
         },
+        // 监听屏幕尺寸变化
         mounted() {
             const that = this;
             window.onresize = () => {
@@ -21,12 +22,15 @@ $(function () {
             }
         },
         methods: {
+            // 初始化
             init: function () {
+                
                 this.dataList = [];
                 this.pageData = { pageNumber: 1, pageSize: 10, totalPage: 3, dataDescription: "" };
                 this.getData(this.pageData.pageNumber);
                 window.onscroll = this.scroll;
             },
+            // 请求数据
             getData: function (pageNumber) {
                 $.ajax({
                     url: "https://api.apiopen.top/musicBroadcasting",
@@ -53,6 +57,7 @@ $(function () {
                     }
                 });
             },
+            // 滚动加载
             scroll: function () {
                 //文档内容实际高度（包括超出视窗的溢出部分）
                 var scrollHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
@@ -70,6 +75,7 @@ $(function () {
                     }
                 }
             },
+            // 瀑布流处理
             waterfall: function (elements) {
                 if (elements.length < 1) {
                     return;
@@ -96,6 +102,7 @@ $(function () {
                     }
                 }
             },
+            // 获取最小列索引
             getIndex: function (minHeight, everyHeight) {
                 for (var index in everyHeight) {
                     if (everyHeight[index] == minHeight) {
@@ -103,6 +110,7 @@ $(function () {
                     }
                 }
             },
+            // 判断图片是否已加载
             imgLoading: function (callback) {
                 var isloaded = true;
                 var temTimeImg;
@@ -121,12 +129,10 @@ $(function () {
                         waterFall.imgLoading(callback);
                     }, 500);
                 }
-            },
-            resize: function () {
-
             }
         },
         watch: {
+            // 监听dataList数据变化，主要用于滑动加载下一页
             dataList: function () {
                 this.$nextTick(function () {
                     if ($(waterFall.$el).find('.list-item').length < 1) {
@@ -139,6 +145,7 @@ $(function () {
                     });
                 });
             },
+            // 监听屏幕尺寸变化，并重新布局
             screenWidth(val) {
                 if (!this.timer) {
                     this.screenWidth = val;

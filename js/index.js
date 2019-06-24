@@ -4,13 +4,25 @@ $(function () {
         data: {
             pageData: {},
             dataList: [],
-            loading: false
+            loading: false,
+            screenWidth: window.screen.width,
+            timer: false
         },
         created: function () {
             this.init();
         },
+        mounted() {
+            const that = this;
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = window.screen.width;
+                    that.screenWidth = window.screenWidth;
+                })();
+            }
+        },
         methods: {
             init: function () {
+                this.dataList = [];
                 this.pageData = { pageNumber: 1, pageSize: 10, totalPage: 3, dataDescription: "" };
                 this.getData(this.pageData.pageNumber);
                 window.onscroll = this.scroll;
@@ -42,23 +54,26 @@ $(function () {
                 });
             },
             scroll: function () {
-                // 文档内容实际高度(包含超出视窗的部分)
-                var scrollHeight = Math.max($(document).height(), $(document.body).height());
-                // 滚动条滚动的距离
-                var scrollTop = $(window).scrollTop();
-                // 窗口可视范围高度
-                var clientHeight = $(window).height();
+                //文档内容实际高度（包括超出视窗的溢出部分）
+                var scrollHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+                //滚动条滚动距离
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+                //窗口可视范围高度
+                var clientHeight = window.innerHeight || Math.min(document.documentElement.clientHeight, document.body.clientHeight);
                 if (clientHeight + scrollTop >= scrollHeight) {
                     if (this.pageData.pageNumber < this.pageData.totalPage) {
                         this.loading = true;
                         this.pageData.pageNumber += 1;
                         this.getData(this.pageData.pageNumber);
                     } else {
-                        this.loading = false;
+                        waterFall.loading = false;
                     }
                 }
             },
             waterfall: function (elements) {
+                if (elements.length < 1) {
+                    return;
+                }
                 var boxes = elements;
                 var boxWidth = boxes[0].offsetWidth + 20;
                 var windowWidth = $(document).width();
@@ -91,34 +106,50 @@ $(function () {
             imgLoading: function (callback) {
                 var isloaded = true;
                 var temTimeImg;
-                $('.list-item').each(function(){
-                    if ($(this).find('img').height === 0) {
+                $('.list-item').each(function () {
+                    if ($($(this).find('img')[0]).height() === 0) {
                         isloaded = false;
                         return false;
                     }
                 });
-                if(isloaded){
+                if (isloaded) {
                     clearTimeout(temTimeImg);
                     callback();
-                }else{
+                } else {
                     isloaded = true;
-                    temTimeImg = setTimeout(function(){
+                    temTimeImg = setTimeout(function () {
                         waterFall.imgLoading(callback);
-                    },500);
+                    }, 500);
                 }
+            },
+            resize: function () {
+
             }
         },
         watch: {
             dataList: function () {
                 this.$nextTick(function () {
-                    waterFall.imgLoading(function(){
+                    if ($(waterFall.$el).find('.list-item').length < 1) {
+                        return;
+                    }
+                    waterFall.imgLoading(function () {
                         waterFall.waterfall($(waterFall.$el).find('.list-item'));
+                        var temHeight = $(waterFall.$el).find('.loadMore')[0].previousElementSibling.offsetTop + $(waterFall.$el).find('.loadMore')[0].previousElementSibling.offsetHeight + 'px';
+                        $($(waterFall.$el).find('.loadMore')[0]).css({ 'position': 'absolute', 'top': temHeight });
                     });
                 });
+            },
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val;
+                    this.timer = true;
+                    let that = this;
+                    setTimeout(function () {
+                        that.init();
+                        that.timer = false;
+                    }, 400);
+                }
             }
         }
     });
 });
-
-
-// 写到处理图片了,但同时滚动至底部出了问题

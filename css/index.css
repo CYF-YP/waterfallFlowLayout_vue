@@ -54,3 +54,8 @@ a:hover {
     line-height: 40px;
     text-align: center;
 }
+#wrap>.loadMore {
+    width: 100%;
+    text-align: center;
+    background: inherit;
+}

@@ -24,9 +24,8 @@ $(function () {
         methods: {
             // 初始化
             init: function () {
-                
                 this.dataList = [];
-                this.pageData = { pageNumber: 1, pageSize: 10, totalPage: 3, dataDescription: "" };
+                this.pageData = { pageNumber: 1, pageSize: 10, totalPage: 3 };
                 this.getData(this.pageData.pageNumber);
                 window.onscroll = this.scroll;
             },
@@ -38,6 +37,7 @@ $(function () {
                     dataType: "json",
                     data: {},
                     success: function (data) {
+                        // 最好加个判断,请求成功且有数据
                         // 数据格式:[{src:xxx, href:xxx, name:xxx},{src:xxx, href:xxx, name:xxx}]
                         if (pageNumber == 1) {
                             for (x in data.result[0].channellist) {

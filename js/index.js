@@ -82,7 +82,7 @@ $(function () {
                 }
                 var boxes = elements;
                 var boxWidth = boxes[0].offsetWidth + 20;
-                var windowWidth = $(document).width();
+                var windowWidth = $(window).width();
                 var colsNumber = Math.floor(windowWidth / boxWidth);
 
                 this.$el.style.width = boxWidth * colsNumber + 'px';
